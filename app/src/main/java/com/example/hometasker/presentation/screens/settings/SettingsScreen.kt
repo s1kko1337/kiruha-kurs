@@ -71,13 +71,6 @@ fun SettingsScreen(
                 }
             )
 
-            SettingsSwitch(
-                title = "Dynamic Color",
-                subtitle = "Использовать цвета из обоев (Android 12+)",
-                checked = uiState.dynamicColorEnabled,
-                onCheckedChange = viewModel::onDynamicColorChange
-            )
-
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             // Секция: Уведомления
