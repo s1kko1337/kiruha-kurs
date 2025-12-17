@@ -52,7 +52,7 @@ class ImportDataUseCase @Inject constructor(
                 val task = Task(
                     title = exportTask.title,
                     description = exportTask.description,
-                    categoryId = exportTask.categoryId?.let { categoryIdMap[it] },
+                    categoryIds = exportTask.categoryIds.mapNotNull { categoryIdMap[it] },
                     priority = Priority.valueOf(exportTask.priority),
                     isCompleted = exportTask.isCompleted,
                     completedAt = exportTask.completedAt?.let { LocalDateTime.parse(it) },

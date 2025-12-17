@@ -130,12 +130,18 @@ fun TaskDetailScreen(
                         )
                     }
 
-                    // Категория
-                    uiState.category?.let { category ->
-                        CategoryChip(
-                            category = category,
-                            onClick = { }
-                        )
+                    // Категории
+                    if (uiState.categories.isNotEmpty()) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            uiState.categories.forEach { category ->
+                                CategoryChip(
+                                    category = category,
+                                    onClick = { }
+                                )
+                            }
+                        }
                     }
 
                     // Описание

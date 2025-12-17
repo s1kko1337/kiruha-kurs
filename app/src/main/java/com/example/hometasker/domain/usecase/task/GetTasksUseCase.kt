@@ -59,7 +59,7 @@ class GetTasksUseCase @Inject constructor(
                 }
             }
             SortOption.STATUS -> tasks.sortedBy { it.isCompleted }
-            SortOption.CATEGORY -> tasks.sortedBy { it.categoryId }
+            SortOption.CATEGORY -> tasks.sortedBy { it.categoryIds.firstOrNull() }
             SortOption.NAME -> tasks.sortedBy { it.title.lowercase() }
         }
     }

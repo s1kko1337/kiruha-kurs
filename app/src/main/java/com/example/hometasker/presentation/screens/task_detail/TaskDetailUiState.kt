@@ -6,7 +6,7 @@ import com.example.hometasker.domain.model.TimeTrackingSession
 
 data class TaskDetailUiState(
     val task: Task? = null,
-    val category: Category? = null,
+    val categories: List<Category> = emptyList(),
     val trackingSessions: List<TimeTrackingSession> = emptyList(),
     val activeSession: TimeTrackingSession? = null,
     val elapsedSeconds: Long = 0,

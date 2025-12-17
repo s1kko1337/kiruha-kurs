@@ -58,7 +58,7 @@ class TaskEditViewModel @Inject constructor(
                         isEditMode = true,
                         title = task.title,
                         description = task.description ?: "",
-                        categoryId = task.categoryId,
+                        selectedCategoryIds = task.categoryIds,
                         priority = task.priority,
                         dueDate = task.dueDate,
                         dueTime = task.dueTime,
@@ -83,8 +83,20 @@ class TaskEditViewModel @Inject constructor(
         _uiState.update { it.copy(description = description) }
     }
 
-    fun onCategoryChange(categoryId: Long?) {
-        _uiState.update { it.copy(categoryId = categoryId) }
+    fun onCategoryToggle(categoryId: Long) {
+        _uiState.update { state ->
+            val currentIds = state.selectedCategoryIds.toMutableList()
+            if (currentIds.contains(categoryId)) {
+                currentIds.remove(categoryId)
+            } else {
+                currentIds.add(categoryId)
+            }
+            state.copy(selectedCategoryIds = currentIds)
+        }
+    }
+
+    fun onCategoriesChange(categoryIds: List<Long>) {
+        _uiState.update { it.copy(selectedCategoryIds = categoryIds) }
     }
 
     fun onPriorityChange(priority: Priority) {
@@ -129,7 +141,7 @@ class TaskEditViewModel @Inject constructor(
                     id = taskId ?: 0,
                     title = state.title.trim(),
                     description = state.description.trim().takeIf { it.isNotEmpty() },
-                    categoryId = state.categoryId,
+                    categoryIds = state.selectedCategoryIds,
                     priority = state.priority,
                     dueDate = state.dueDate,
                     dueTime = state.dueTime,

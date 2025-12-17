@@ -1,3 +1,121 @@
 <resources>
     <string name="app_name">HomeTasker</string>
+    <string name="widget_description">Display today\'s tasks on your home screen</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">Today\'s Tasks</string>
+    <string name="home_no_tasks">No tasks for today</string>
+    <string name="home_add_task">Add Task</string>
+
+    <!-- Task -->
+    <string name="task_title">Title</string>
+    <string name="task_description">Description</string>
+    <string name="task_due_date">Due Date</string>
+    <string name="task_due_time">Due Time</string>
+    <string name="task_priority">Priority</string>
+    <string name="task_category">Category</string>
+    <string name="task_reminder">Reminder</string>
+    <string name="task_repeat">Repeat</string>
+    <string name="task_save">Save</string>
+    <string name="task_delete">Delete</string>
+    <string name="task_complete">Complete</string>
+
+    <!-- Priority -->
+    <string name="priority_none">None</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+
+    <!-- Repeat -->
+    <string name="repeat_none">None</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_custom">Custom</string>
+
+    <!-- Categories -->
+    <string name="categories_title">Categories</string>
+    <string name="category_add">Add Category</string>
+    <string name="category_edit">Edit Category</string>
+    <string name="category_name">Category Name</string>
+    <string name="category_color">Color</string>
+    <string name="category_icon">Icon</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_completed">Completed</string>
+    <string name="statistics_pending">Pending</string>
+    <string name="statistics_overdue">Overdue</string>
+    <string name="statistics_total_time">Total Time</string>
+    <string name="statistics_this_week">This Week</string>
+    <string name="statistics_this_month">This Month</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_colors">Dynamic Colors</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_enable_notifications">Enable Notifications</string>
+    <string name="settings_daily_summary">Daily Summary</string>
+    <string name="settings_data">Data</string>
+    <string name="settings_export">Export Data</string>
+    <string name="settings_import">Import Data</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_first_day_of_week">First Day of Week</string>
+    <string name="settings_time_format">Time Format</string>
+
+    <!-- Timer -->
+    <string name="timer_start">Start</string>
+    <string name="timer_pause">Pause</string>
+    <string name="timer_resume">Resume</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_tracking">Time Tracking</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search tasks…</string>
+    <string name="search_no_results">No results found</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
+    <string name="error">Error</string>
+    <string name="loading">Loading…</string>
+    <string name="empty_state">Nothing here yet</string>
+
+    <!-- Days of week -->
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Welcome to HomeTasker</string>
+    <string name="onboarding_welcome_desc">Your personal household task manager</string>
+    <string name="onboarding_organize">Stay Organized</string>
+    <string name="onboarding_organize_desc">Create categories and prioritize your tasks</string>
+    <string name="onboarding_track">Track Progress</string>
+    <string name="onboarding_track_desc">Monitor time spent and view statistics</string>
+    <string name="onboarding_remind">Never Forget</string>
+    <string name="onboarding_remind_desc">Set reminders and recurring tasks</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
 </resources>

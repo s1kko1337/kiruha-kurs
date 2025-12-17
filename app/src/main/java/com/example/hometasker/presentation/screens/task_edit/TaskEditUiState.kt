@@ -10,7 +10,7 @@ data class TaskEditUiState(
     val isEditMode: Boolean = false,
     val title: String = "",
     val description: String = "",
-    val categoryId: Long? = null,
+    val selectedCategoryIds: List<Long> = emptyList(),
     val priority: Priority = Priority.NONE,
     val dueDate: LocalDate? = null,
     val dueTime: LocalTime? = null,

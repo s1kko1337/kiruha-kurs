@@ -58,7 +58,8 @@ class GetStatisticsUseCase @Inject constructor(
                 .mapValues { it.value.size }
 
             val tasksByCategory = tasks
-                .groupBy { it.categoryId }
+                .flatMap { task -> task.categoryIds.map { categoryId -> categoryId to task } }
+                .groupBy({ it.first }, { it.second })
                 .mapValues { it.value.size }
 
             val streak = calculateStreak(completedTasks)
@@ -118,6 +119,6 @@ data class Statistics(
     val avgCompletionTimeMinutes: Int,
     val tasksByDay: Map<LocalDate, Int>,
     val productiveWeekdays: Map<DayOfWeek, Int>,
-    val tasksByCategory: Map<Long?, Int>,
+    val tasksByCategory: Map<Long, Int>,
     val currentStreak: Int
 )

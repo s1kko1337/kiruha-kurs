@@ -9,6 +9,7 @@ import com.example.hometasker.data.local.database.dao.TaskDao
 import com.example.hometasker.data.local.database.dao.TaskInstanceDao
 import com.example.hometasker.data.local.database.dao.TimeTrackingDao
 import com.example.hometasker.data.local.database.entity.CategoryEntity
+import com.example.hometasker.data.local.database.entity.TaskCategoryCrossRef
 import com.example.hometasker.data.local.database.entity.TaskEntity
 import com.example.hometasker.data.local.database.entity.TaskInstanceEntity
 import com.example.hometasker.data.local.database.entity.TimeTrackingSessionEntity
@@ -17,10 +18,11 @@ import com.example.hometasker.data.local.database.entity.TimeTrackingSessionEnti
     entities = [
         TaskEntity::class,
         CategoryEntity::class,
+        TaskCategoryCrossRef::class,
         TaskInstanceEntity::class,
         TimeTrackingSessionEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

@@ -2,7 +2,6 @@ package com.example.hometasker.data.local.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.hometasker.domain.model.Priority
@@ -13,16 +12,7 @@ import java.time.LocalTime
 
 @Entity(
     tableName = "tasks",
-    foreignKeys = [
-        ForeignKey(
-            entity = CategoryEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["category_id"],
-            onDelete = ForeignKey.SET_NULL
-        )
-    ],
     indices = [
-        Index(value = ["category_id"]),
         Index(value = ["due_date"]),
         Index(value = ["is_completed"])
     ]
@@ -33,9 +23,6 @@ data class TaskEntity(
 
     val title: String,
     val description: String? = null,
-
-    @ColumnInfo(name = "category_id")
-    val categoryId: Long? = null,
 
     val priority: Priority = Priority.NONE,
 

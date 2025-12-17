@@ -55,11 +55,11 @@ class TaskDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val task = getTaskByIdUseCase(taskId)
-                val category = task?.categoryId?.let { categoryRepository.getCategoryById(it) }
+                val categories = task?.categoryIds?.mapNotNull { categoryRepository.getCategoryById(it) } ?: emptyList()
 
                 _uiState.update { it.copy(
                     task = task,
-                    category = category,
+                    categories = categories,
                     isLoading = false
                 )}
 

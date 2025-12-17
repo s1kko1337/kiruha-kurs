@@ -2,7 +2,9 @@ package com.example.hometasker.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.hometasker.domain.model.Task
 import com.example.hometasker.domain.repository.SortOption
+import com.example.hometasker.domain.usecase.task.CreateTaskUseCase
 import com.example.hometasker.domain.usecase.task.DeleteTaskUseCase
 import com.example.hometasker.domain.usecase.task.GetTasksUseCase
 import com.example.hometasker.domain.usecase.task.TaskFilter
@@ -19,11 +21,15 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getTasksUseCase: GetTasksUseCase,
     private val toggleTaskCompletionUseCase: ToggleTaskCompletionUseCase,
-    private val deleteTaskUseCase: DeleteTaskUseCase
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val createTaskUseCase: CreateTaskUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
+    // Хранение удалённой задачи для возможности отмены
+    private var lastDeletedTask: Task? = null
 
     init {
         loadTasks()
@@ -82,7 +88,18 @@ class HomeViewModel @Inject constructor(
     fun onDeleteTask(taskId: Long) {
         viewModelScope.launch {
             val task = _uiState.value.tasks.find { it.id == taskId } ?: return@launch
+            lastDeletedTask = task
             deleteTaskUseCase(task)
+        }
+    }
+
+    fun undoDelete() {
+        viewModelScope.launch {
+            lastDeletedTask?.let { task ->
+                // Создаём новую задачу с теми же данными (но новым id)
+                createTaskUseCase(task.copy(id = 0))
+                lastDeletedTask = null
+            }
         }
     }
 

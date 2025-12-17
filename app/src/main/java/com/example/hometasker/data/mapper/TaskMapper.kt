@@ -1,6 +1,7 @@
 package com.example.hometasker.data.mapper
 
 import com.example.hometasker.data.local.database.entity.TaskEntity
+import com.example.hometasker.data.local.database.entity.TaskWithCategories
 import com.example.hometasker.domain.model.Task
 import javax.inject.Inject
 
@@ -9,12 +10,12 @@ import javax.inject.Inject
  */
 class TaskMapper @Inject constructor() {
 
-    fun toDomain(entity: TaskEntity): Task {
+    fun toDomain(entity: TaskEntity, categoryIds: List<Long> = emptyList()): Task {
         return Task(
             id = entity.id,
             title = entity.title,
             description = entity.description,
-            categoryId = entity.categoryId,
+            categoryIds = categoryIds,
             priority = entity.priority,
             isCompleted = entity.isCompleted,
             completedAt = entity.completedAt,
@@ -33,12 +34,18 @@ class TaskMapper @Inject constructor() {
         )
     }
 
+    fun toDomain(taskWithCategories: TaskWithCategories): Task {
+        return toDomain(
+            entity = taskWithCategories.task,
+            categoryIds = taskWithCategories.categories.map { it.id }
+        )
+    }
+
     fun toEntity(domain: Task): TaskEntity {
         return TaskEntity(
             id = domain.id,
             title = domain.title,
             description = domain.description,
-            categoryId = domain.categoryId,
             priority = domain.priority,
             isCompleted = domain.isCompleted,
             completedAt = domain.completedAt,

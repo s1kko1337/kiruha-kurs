@@ -21,4 +21,9 @@ interface TaskRepository {
     suspend fun updateTask(task: Task)
     suspend fun deleteTask(task: Task)
     suspend fun toggleTaskCompletion(taskId: Long, isCompleted: Boolean)
+
+    // Category management for tasks
+    suspend fun updateTaskCategories(taskId: Long, categoryIds: List<Long>)
+    suspend fun addCategoryToTask(taskId: Long, categoryId: Long)
+    suspend fun removeCategoryFromTask(taskId: Long, categoryId: Long)
 }
