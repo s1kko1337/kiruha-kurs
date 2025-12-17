@@ -1,18 +1,23 @@
 package com.example.hometasker.presentation.screens.task_edit
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hometasker.domain.model.Priority
 import com.example.hometasker.domain.model.RepeatType
 import com.example.hometasker.domain.model.Task
+import com.example.hometasker.domain.repository.TaskRepository
 import com.example.hometasker.domain.usecase.category.GetCategoriesUseCase
 import com.example.hometasker.domain.usecase.task.CreateTaskUseCase
 import com.example.hometasker.domain.usecase.task.GetTaskByIdUseCase
 import com.example.hometasker.domain.usecase.task.UpdateTaskUseCase
+import com.example.hometasker.widget.TaskWidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -21,11 +26,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskEditViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
     private val getTaskByIdUseCase: GetTaskByIdUseCase,
     private val createTaskUseCase: CreateTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val taskRepository: TaskRepository,
+    private val taskWidgetUpdater: TaskWidgetUpdater
 ) : ViewModel() {
 
     private val taskId: Long? = savedStateHandle.get<Long>("taskId")?.takeIf { it != -1L }
@@ -157,10 +165,24 @@ class TaskEditViewModel @Inject constructor(
                     createTaskUseCase(task)
                 }
 
+                // Обновляем виджет
+                updateWidget()
+
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message, isSaving = false) }
             }
+        }
+    }
+
+    private suspend fun updateWidget() {
+        try {
+            val todayTasks = taskRepository.getTasksByDate(LocalDate.now()).first()
+                .filter { !it.isCompleted }
+                .take(10)
+            taskWidgetUpdater.updateWidget(context, todayTasks)
+        } catch (e: Exception) {
+            // Игнорируем ошибки обновления виджета
         }
     }
 }

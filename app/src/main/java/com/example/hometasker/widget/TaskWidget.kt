@@ -1,7 +1,6 @@
 package com.example.hometasker.widget
 
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +45,13 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.example.hometasker.MainActivity
 import com.example.hometasker.R
+import com.example.hometasker.domain.repository.TaskRepository
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -62,7 +68,7 @@ class TaskWidget : GlanceAppWidget() {
         }
     }
 
-    @Composable
+    @androidx.compose.runtime.Composable
     private fun TaskWidgetContent() {
         val prefs = currentState<Preferences>()
         val tasksJson = prefs[TASKS_KEY] ?: "[]"
@@ -84,7 +90,7 @@ class TaskWidget : GlanceAppWidget() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Today's Tasks",
+                    text = "Задачи на сегодня",
                     style = TextStyle(
                         color = GlanceTheme.colors.onSurface,
                         fontSize = 18.sp,
@@ -102,7 +108,7 @@ class TaskWidget : GlanceAppWidget() {
                 ) {
                     Image(
                         provider = ImageProvider(R.drawable.ic_add),
-                        contentDescription = "Add task",
+                        contentDescription = "Добавить задачу",
                         modifier = GlanceModifier.size(16.dp)
                     )
                 }
@@ -116,7 +122,7 @@ class TaskWidget : GlanceAppWidget() {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No tasks for today",
+                        text = "Нет задач на сегодня",
                         style = TextStyle(
                             color = GlanceTheme.colors.onSurfaceVariant,
                             fontSize = 14.sp
@@ -134,7 +140,7 @@ class TaskWidget : GlanceAppWidget() {
         }
     }
 
-    @Composable
+    @androidx.compose.runtime.Composable
     private fun TaskItem(task: WidgetTask) {
         Row(
             modifier = GlanceModifier
@@ -209,6 +215,13 @@ data class WidgetTask(
     val priorityColor: Int?
 )
 
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface WidgetEntryPoint {
+    fun taskRepository(): TaskRepository
+    fun taskWidgetUpdater(): TaskWidgetUpdater
+}
+
 class ToggleTaskCallback : ActionCallback {
     override suspend fun onAction(
         context: Context,
@@ -217,7 +230,15 @@ class ToggleTaskCallback : ActionCallback {
     ) {
         val taskId = parameters[TaskWidget.taskIdKey] ?: return
 
-        // Update widget state to show loading/toggled state
+        // Get repository via EntryPoint
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            WidgetEntryPoint::class.java
+        )
+        val taskRepository = entryPoint.taskRepository()
+        val widgetUpdater = entryPoint.taskWidgetUpdater()
+
+        // Update widget state immediately for responsive UI
         updateAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId) { prefs ->
             val tasksJson = prefs[TaskWidget.TASKS_KEY] ?: "[]"
             val tasks = try {
@@ -237,10 +258,15 @@ class ToggleTaskCallback : ActionCallback {
             }
         }
 
-        // Update the widget
+        // Update the widget UI
         TaskWidget().update(context, glanceId)
 
-        // Also trigger actual task completion via repository
-        // This would be done via WorkManager or similar in production
+        // Persist to database
+        withContext(Dispatchers.IO) {
+            val task = taskRepository.getTaskById(taskId)
+            if (task != null) {
+                taskRepository.toggleTaskCompletion(taskId, !task.isCompleted)
+            }
+        }
     }
 }

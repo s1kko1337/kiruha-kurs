@@ -1,28 +1,37 @@
 package com.example.hometasker.presentation.screens.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hometasker.domain.model.Task
 import com.example.hometasker.domain.repository.SortOption
+import com.example.hometasker.domain.repository.TaskRepository
 import com.example.hometasker.domain.usecase.task.CreateTaskUseCase
 import com.example.hometasker.domain.usecase.task.DeleteTaskUseCase
 import com.example.hometasker.domain.usecase.task.GetTasksUseCase
 import com.example.hometasker.domain.usecase.task.TaskFilter
 import com.example.hometasker.domain.usecase.task.ToggleTaskCompletionUseCase
+import com.example.hometasker.widget.TaskWidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getTasksUseCase: GetTasksUseCase,
     private val toggleTaskCompletionUseCase: ToggleTaskCompletionUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val createTaskUseCase: CreateTaskUseCase
+    private val createTaskUseCase: CreateTaskUseCase,
+    private val taskRepository: TaskRepository,
+    private val taskWidgetUpdater: TaskWidgetUpdater
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -82,6 +91,7 @@ class HomeViewModel @Inject constructor(
     fun onTaskCheckedChange(taskId: Long, isCompleted: Boolean) {
         viewModelScope.launch {
             toggleTaskCompletionUseCase(taskId, isCompleted)
+            updateWidget()
         }
     }
 
@@ -90,6 +100,7 @@ class HomeViewModel @Inject constructor(
             val task = _uiState.value.tasks.find { it.id == taskId } ?: return@launch
             lastDeletedTask = task
             deleteTaskUseCase(task)
+            updateWidget()
         }
     }
 
@@ -99,11 +110,23 @@ class HomeViewModel @Inject constructor(
                 // Создаём новую задачу с теми же данными (но новым id)
                 createTaskUseCase(task.copy(id = 0))
                 lastDeletedTask = null
+                updateWidget()
             }
         }
     }
 
     fun refresh() {
         loadTasks()
+    }
+
+    private suspend fun updateWidget() {
+        try {
+            val todayTasks = taskRepository.getTasksByDate(LocalDate.now()).first()
+                .filter { !it.isCompleted }
+                .take(10)
+            taskWidgetUpdater.updateWidget(context, todayTasks)
+        } catch (e: Exception) {
+            // Игнорируем ошибки обновления виджета
+        }
     }
 }
