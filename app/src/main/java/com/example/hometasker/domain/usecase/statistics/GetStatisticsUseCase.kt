@@ -64,6 +64,12 @@ class GetStatisticsUseCase @Inject constructor(
 
             val streak = calculateStreak(completedTasks)
 
+            val pendingTasks = tasks.filter { !it.isCompleted }
+            val overdueTasks = pendingTasks.count { it.isOverdue }
+            val highPriorityPending = pendingTasks.count {
+                it.priority == com.example.hometasker.domain.model.Priority.HIGH
+            }
+
             Statistics(
                 completedToday = completedToday,
                 completedThisWeek = completedThisWeek,
@@ -75,7 +81,10 @@ class GetStatisticsUseCase @Inject constructor(
                 tasksByDay = tasksByDay,
                 productiveWeekdays = productiveWeekdays,
                 tasksByCategory = tasksByCategory,
-                currentStreak = streak
+                currentStreak = streak,
+                overdueTasks = overdueTasks,
+                pendingTasks = pendingTasks.size,
+                highPriorityPending = highPriorityPending
             )
         }
     }
@@ -120,5 +129,8 @@ data class Statistics(
     val tasksByDay: Map<LocalDate, Int>,
     val productiveWeekdays: Map<DayOfWeek, Int>,
     val tasksByCategory: Map<Long, Int>,
-    val currentStreak: Int
+    val currentStreak: Int,
+    val overdueTasks: Int,
+    val pendingTasks: Int,
+    val highPriorityPending: Int
 )
